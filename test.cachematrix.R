@@ -10,25 +10,34 @@
 source("cachematrix.R")
 
 ## 1.  builds the test matrix and shows default solve() function
+message("generating test matrix...")
 test <- c(9, 1, 3, 6, 13, 11, 7, 0, 5, 7, 4, 7, 2, 6, 1, 10)
-print(test)
 test.mx <- matrix(test,4,4)
 print(test.mx)
-solve(test.mx)
+message("checking to see what inverse should look like...")
+test.solve <- solve(test.mx)
+print(test.solve)
 
 ## 2. passes test matrix to into test object
 ##    (from - http://en.wikipedia.org/wiki/Square_matrix)
 ##    along with atomic caching functions
 ##    shows that matrix is cached after $setmx
 ##    is explicitly called on test matrix
+message("passing test matrix to makeCacheMatrix...")
 test.functs <- makeCacheMatrix(test.mx)
 test.functs$setmx(test.mx)
-test.functs$getmx()
+message("and checking if it can retrieve matrix from cache...")
+test.mxret <- test.functs$getmx()
+print(test.mxret)
+
 
 ## 3. tests cacheSolve function with test object
 ##    should return the inverted matrix of the test matrix
 ##    then should return the same matrix values from cache
+message("solving for inverse matrix and storing values...")
 cacheSolve(test.functs)
+message("and checking to see if inverse matrix is stored in cache...")
+message("")
 cacheSolve(test.functs)
 
 ## 4. passes back the cached inverted matrix to the $setmx, $getmx,
@@ -38,12 +47,12 @@ test.inv <- test.functs$getinv()
 print(test.inv)
 test.functs$setmx(test.inv)
 test.inv2 <- cacheSolve(test.functs)
-print("comparing reinverted matrix with original...")
+message("comparing reinverted matrix with original...")
 print(test.inv2)
 print(test.mx)
 if(test.inv2[4,4] == test.mx[4,4]) print("Success") else print("Unsuccessful")
-print(" Note: Values vary slightly from test.mx due to precision of solve()")
+message(" Note: Values vary slightly from test.mx due to precision of solve()")
 
 ##    Clean up objects created during test execution
-rm(test, test.functs, test.inv, test.inv2, test.mx)
+rm(test, test.functs, test.inv, test.inv2, test.mx, test.solve, test.mxret)
 ##    End of test routines.  Review the execution, and debug if necessary
